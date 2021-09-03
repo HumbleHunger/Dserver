@@ -7,7 +7,7 @@
 class Condition : noncopyable
 {
 public:
-	explicit Condition(MutexLock& mutex) : mutex_(mutex_)
+	explicit Condition(MutexLock& mutex) : mutex_(mutex)
 	{
 		pthread_cond_init(&cond_,NULL);
 	}
@@ -25,6 +25,11 @@ public:
 	void notify()
 	{
 		pthread_cond_signal(&cond_);
+	}
+
+	void notifyAll()
+	{
+		pthread_cond_broadcast(&cond_);
 	}
 
 private:
