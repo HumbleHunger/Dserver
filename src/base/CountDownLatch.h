@@ -24,4 +24,6 @@ private:
 	Condition condition_;
 	int count_;
 };
+
 }
+#endif

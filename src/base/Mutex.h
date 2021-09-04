@@ -57,6 +57,6 @@ private:
 	MutexLock& mutex_;
 };
 
-}
+} // namespace DJX
 
 #endif

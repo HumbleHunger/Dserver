@@ -1,6 +1,7 @@
 #include "CountDownLatch.h"
 
-using namespace DJX;
+namespace DJX
+{
 
 CountDownLatch::CountDownLatch(int count)
 	: mutex_(),
@@ -11,8 +12,8 @@ CountDownLatch::CountDownLatch(int count)
 
 void CountDownLatch::wait()
 {
-	MutexLockGuard(mutex_);
-	while (count > 0)
+	MutexLockGuard lock(mutex_);
+	while (count_ > 0)
 	{
 		condition_.wait();
 	}
@@ -20,9 +21,9 @@ void CountDownLatch::wait()
 
 void CountDownLatch::countDown()
 {
-	MutexLockGuard(mutex_);
-	--count;
-	if (count == 0)
+	MutexLockGuard lock(mutex_);
+	--count_;
+	if (count_ == 0)
 	{
 		condition_.notifyAll();
 	}
@@ -30,6 +31,8 @@ void CountDownLatch::countDown()
 
 int CountDownLatch::getCount() const
 {
-	MutexLockGuard(mutex_);
+	MutexLockGuard lock(mutex_);
 	return count_;
 }
+
+} // namespace DJX

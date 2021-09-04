@@ -2,7 +2,11 @@
 #define DJX_CONDITION_H
 
 #include "Mutex.h"
+
 #include <pthread.h>
+
+namespace DJX
+{
 
 class Condition : noncopyable
 {
@@ -19,7 +23,7 @@ public:
 
 	void wait()
 	{
-		pthread_cond_wait(&cond_, mutex_.getPthreadCond());
+		pthread_cond_wait(&cond_, mutex_.getPthreadMutex());
 	}
 
 	void notify()
@@ -36,5 +40,7 @@ private:
 	pthread_cond_t cond_;
 	MutexLock& mutex_;
 };
+
+} // namespace DJX
 
 #endif

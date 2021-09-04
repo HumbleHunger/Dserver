@@ -1,7 +1,7 @@
 #ifndef DJX_NONCOPYABLE_H
 #define DJX_NONCOPYABLE_H
 
-namespace djx
+namespace DJX
 {
 
 class noncopyable
