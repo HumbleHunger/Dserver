@@ -14,7 +14,7 @@ namespace DJX
 namespace detail
 {
 	void* startThread(void *);
-}
+} // namespace detail
 
 class Thread : noncopyable
 {
