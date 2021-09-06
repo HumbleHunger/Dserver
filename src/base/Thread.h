@@ -4,6 +4,7 @@
 #include "CountDownLatch.h"
 #include "Atomic.h"
 #include "CurrentThread.h"
+#include "Exception.h"
 
 #include <functional>
 #include <memory>

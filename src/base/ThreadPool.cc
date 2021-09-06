@@ -52,13 +52,34 @@ Threadpool::Task Threadpool::take()
 
 void Threadpool::runInThread()
 {
-	while (running_)
+	try
 	{
-		Task task(take());
-		if (task)
+		while (running_)
 		{
-			task();
+			Task task(take());
+			if (task)
+			{
+				task();
+			}
 		}
+	}
+	catch (const Exception& ex)
+	{
+		fprintf(stderr, "Exception caught in Thread %d\n", CurrentThread::tid());
+		fprintf(stderr, "reason: %s\n", ex.what());
+        fprintf(stderr, "stack trace: %s\n", ex.stackTrace());
+        abort();
+	}
+	catch (const std::exception& ex)
+	{
+		fprintf(stderr, "exception caught in Thread %d\n", CurrentThread::tid());
+        fprintf(stderr, "reason: %s\n", ex.what());
+        abort();
+	}
+	catch (...)
+	{
+		fprintf(stderr, "unknown exception caught in Thread %d\n", CurrentThread::tid());
+        throw;
 	}
 	// 异常处理
 }
