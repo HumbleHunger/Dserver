@@ -3,12 +3,10 @@
 namespace DJX
 {
 
-Threadpool::Threadpool()
- : mutex_(),
-   notEmpty_(mutex_),
-   notFull_(mutex_),
-   maxQueueSize_(0),
-   running_(false)
+Threadpool::Threadpool(int numThread, int maxsize)
+ : running_(false),
+   queue_(maxsize),
+   numThread_(numThread)
 {
 }
 
@@ -20,13 +18,14 @@ Threadpool::~Threadpool()
 	}
 }
 
-void Threadpool::start(int numThreads)
+void Threadpool::start()
 {
+	assert(!running_);
 	running_ = true;
-	threads_.reserve(numThreads);
-	for (int i = 0; i < numThreads; ++i)
+	threads_.reserve(numThread_);
+	for (int i = 0; i < numThread_; ++i)
 	{
-		threads_.emplace_back(new DJX::Thread(std::bind(&runInThread, this)));
+		threads_.emplace_back(new DJX::Thread(std::bind(&Threadpool::runInThread, this)));
 		threads_[i]->start();
 	}
 }
@@ -37,24 +36,41 @@ void Threadpool::stop()
 }
 size_t Threadpool::queueSize() const
 {
-
+	return queue_.size();
 }
+/*
+bool Threadpool::isFull() const
+{
+	return maxQueueSize_ > 0 && queue_.size() >= maxQueueSize_;
+}
+
+bool Threadpool::isEmpty() const
+{
+	return maxQueueSize_ > 0 && queue_.size() == 0;
+}*/
 // 往任务队列添加任务
 void Threadpool::run(Task f)
 {
-	MutexLockGuard lock(mutex_);
+/*	MutexLockGuard lock(mutex_);
 	while (isFull() && running_)
 	{
 		notFull_.wait();
-	}
+	}*/
+	// 内部还有一把锁，可能会有性能影响
 	queue_.put(f);
+}
+// 从任务队列中取任务
+Threadpool::Task Threadpool::take()
+{
+	Task ret = queue_.take();
+	return ret;
 }
 
 void Threadpool::runInThread()
 {
 	while (running_)
 	{
-		Task task(queue_.take());
+		Task task(take());
 		if (task)
 		{
 			task();
