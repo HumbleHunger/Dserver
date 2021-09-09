@@ -13,7 +13,9 @@ namespace detail
 template<int SIZE>
 class FixedBuffer : noncopyable
 {
+	typedef LogStream self;
 public:
+	typedef detail::FixedBuffer<>
 	FixedBuffer()
 	: cur_(data_)
 	{}
@@ -49,7 +51,7 @@ private:
 	char* cur_;
 };
 } // namespace detail
-class LogStream
+class LogStream : noncopyable
 {
 public:
 
