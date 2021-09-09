@@ -6,6 +6,13 @@
 		"functional": "cpp",
 		"istream": "cpp",
 		"new": "cpp",
-		"ostream": "cpp"
+		"ostream": "cpp",
+		"cstring": "cpp",
+		"chrono": "cpp",
+		"random": "cpp",
+		"fstream": "cpp",
+		"iostream": "cpp",
+		"sstream": "cpp",
+		"streambuf": "cpp"
 	}
 }
