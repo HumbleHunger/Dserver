@@ -3,14 +3,14 @@
 namespace DJX
 {
 
-Threadpool::Threadpool(int numThread, int maxsize)
+ThreadPool::ThreadPool(int numThread, int maxsize)
  : running_(false),
    queue_(maxsize),
    numThread_(numThread)
 {
 }
 
-Threadpool::~Threadpool()
+ThreadPool::~ThreadPool()
 {
 	if (running_)
 	{
@@ -18,39 +18,39 @@ Threadpool::~Threadpool()
 	}
 }
 
-void Threadpool::start()
+void ThreadPool::start()
 {
 	assert(!running_);
 	running_ = true;
 	threads_.reserve(numThread_);
 	for (int i = 0; i < numThread_; ++i)
 	{
-		threads_.emplace_back(new DJX::Thread(std::bind(&Threadpool::runInThread, this)));
+		threads_.emplace_back(new DJX::Thread(std::bind(&ThreadPool::runInThread, this)));
 		threads_[i]->start();
 	}
 }
 
-void Threadpool::stop()
+void ThreadPool::stop()
 {
 	running_ = false;
 }
-size_t Threadpool::queueSize() const
+size_t ThreadPool::queueSize() const
 {
 	return queue_.size();
 }
 // 往任务队列添加任务
-void Threadpool::run(Task f)
+void ThreadPool::run(Task f)
 {
 	queue_.put(f);
 }
 // 从任务队列中取任务
-Threadpool::Task Threadpool::take()
+ThreadPool::Task ThreadPool::take()
 {
 	Task ret = queue_.take();
 	return ret;
 }
 
-void Threadpool::runInThread()
+void ThreadPool::runInThread()
 {
 	try
 	{

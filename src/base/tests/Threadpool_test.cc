@@ -8,7 +8,7 @@ void func(char* str)
 	std::cout << str << std::endl;
 }
 
-void check(const DJX::Threadpool* tp)
+void check(const DJX::ThreadPool* tp)
 {
 	while (1)
 	{
@@ -18,7 +18,7 @@ void check(const DJX::Threadpool* tp)
 
 int main()
 {
-	DJX::Threadpool pool(8, 10);
+	DJX::ThreadPool pool(8, 10);
 	pool.start();
 	for (int i = 0; i < 1000; ++i)
 	{

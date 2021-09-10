@@ -1,5 +1,5 @@
-#ifndef DJX_THREADPOOL_H
-#define DJX_THREADPOOL_H
+#ifndef DJX_ThreadPool_H
+#define DJX_ThreadPool_H
 
 #include "Thread.h"
 #include "BlockingQueue.h"
@@ -9,13 +9,13 @@
 namespace DJX
 {
 
-class Threadpool : noncopyable
+class ThreadPool : noncopyable
 {
 public:
 	typedef std::function<void ()> Task;
 	
-	explicit Threadpool(int numThread, int maxsize);
-	~Threadpool();
+	explicit ThreadPool(int numThread, int maxsize);
+	~ThreadPool();
 	void start();
 	void stop();
 	size_t queueSize() const;
