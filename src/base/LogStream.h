@@ -2,8 +2,10 @@
 #define	DJX_LOGSTREAM_H
 
 #include "noncopyable.h"
-#include <string.h>
+
+#include <string>
 #include <assert.h>
+#include <string.h>
 
 namespace DJX
 {
@@ -17,15 +19,13 @@ const int kLargeBuffer = 4000*1000;
 template<int SIZE>
 class FixedBuffer : noncopyable
 {
-	typedef LogStream self;
 public:
-	typedef detail::FixedBuffer<>
 	FixedBuffer()
 	: cur_(data_)
 	{}
 	~FixedBuffer() = default;
 	// 往缓冲区输入
-	void append(const char* buf, size_t len)
+	void append(const char* buf, int len)
 	{
 		// 如果有足够空间放入缓冲区
 		if (static_cast<size_t>(avail()) > len)
@@ -37,7 +37,7 @@ public:
 	}
 	// 返回缓冲区的原始指针
 	const char* data() const { return data_; }
-  	int length() const { return static_cast<int>(cur_ - data_); }	
+  int length() const { return static_cast<int>(cur_ - data_); }	
 	// 返回当前可写入的位置
 	char* current() { return cur_; }
 	// 返回可写入的字节数
@@ -46,12 +46,12 @@ public:
 	// 只重置cur_指针
 	void reset() { cur_ = data_; }
 	// 清空缓冲区
-	void bzero() { memZero(data_, sizeof data_); }
+	void bzero() { memset(data_, 0, sizeof data_); }
 	// 转成String
-	string toString() const { return string(data_, length()); }
+	std::string toString() const { return std::string(data_, length()); }
 
 private:
-	const char* end() { return data_ + sizeof data_; }
+	const char* end() const { return data_ + sizeof data_; }
 	
 	char data_[SIZE];
 	char* cur_;
@@ -100,7 +100,7 @@ public:
   {
     if (str)
     {
-      buffer_.append(str, strlen(str));
+      buffer_.append(str, ::strlen(str));
     }
     else
     {

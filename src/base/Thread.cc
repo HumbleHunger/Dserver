@@ -26,6 +26,7 @@ AtomicInt32 Thread::numCreated_;
 
 Thread::Thread(ThreadFunc func)
 	: started_(false),
+	  joined_(false),
 	  pthreadId_(0),
 	  tid_(0),
 	  func_(std::move(func)),
@@ -37,7 +38,7 @@ Thread::Thread(ThreadFunc func)
 Thread::~Thread()
 {
 	// 回收资源
-	if (started_)
+	if (started_ && !joined_)
 	{
 		pthread_detach(pthreadId_);
 	}
@@ -56,6 +57,14 @@ void Thread::start()
 	{
 		latch_.wait();
 	}
+}
+
+int Thread::join()
+{	
+	assert(started_);
+	assert(!joined_);
+	joined_ = true;
+	return pthread_join(pthreadId_, NULL);
 }
 
 void Thread::runInThread()

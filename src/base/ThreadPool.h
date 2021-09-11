@@ -22,12 +22,12 @@ public:
 	// 往任务队列添加任务
 	void run(Task f);
 
+	bool running_;
 private:
 	// 工作线程的入口函数
 	void runInThread();
 	Task take();
 
-	bool running_;
 	int numThread_;
 	// 任务队列的最大长度
 	// 线程列表

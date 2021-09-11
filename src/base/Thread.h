@@ -29,7 +29,9 @@ public:
 	~Thread();
 
 	void start();
-	
+
+	int join();
+
 	pid_t tid() const { return tid_; }
 	
 	bool started() const { return started_; }
@@ -41,6 +43,7 @@ private:
 	void runInThread();
 
 	bool started_;
+	bool joined_;
 	pthread_t pthreadId_;
 	// 线程在计算机中的唯一标识
 	pid_t tid_;

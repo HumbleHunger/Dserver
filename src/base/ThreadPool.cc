@@ -23,6 +23,8 @@ void ThreadPool::start()
 	assert(!running_);
 	running_ = true;
 	threads_.reserve(numThread_);
+	// 将自身指针传给queue
+	queue_.bind(this);
 	for (int i = 0; i < numThread_; ++i)
 	{
 		threads_.emplace_back(new DJX::Thread(std::bind(&ThreadPool::runInThread, this)));
@@ -32,8 +34,14 @@ void ThreadPool::start()
 
 void ThreadPool::stop()
 {
-	running_ = false;
+	queue_.notifyAll(true);
+
+	for (auto& thr : threads_)
+	{
+		thr->join();
+	}
 }
+
 size_t ThreadPool::queueSize() const
 {
 	return queue_.size();
@@ -46,7 +54,8 @@ void ThreadPool::run(Task f)
 // 从任务队列中取任务
 ThreadPool::Task ThreadPool::take()
 {
-	Task ret = queue_.take();
+	Task ret = nullptr;
+	ret = queue_.take();
 	return ret;
 }
 
