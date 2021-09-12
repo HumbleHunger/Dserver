@@ -15,6 +15,7 @@ namespace DJX
 __thread char t_errnobuf[512];
 __thread char t_time[64];
 __thread time_t t_lastSecond;
+// 返回系统错误的信息
 const char* strerror_tl(int savedErrno)
 {
   return strerror_r(savedErrno, t_errnobuf, sizeof t_errnobuf);
@@ -85,7 +86,7 @@ Logger::Impl::Impl(LogLevel level, int savedErrno, const SourceFile& file, int l
   CurrentThread::tid();
   stream_ << T(CurrentThread::tidString(), CurrentThread::tidStringLength());
   stream_ << T(LogLevelName[level], 6);
-  // 如果出现系统错误
+  // 如果出现系统错误，会将错误信息保存到线程局部数据t_errnobuf中
   if (savedErrno != 0)
   {
     stream_ << strerror_tl(savedErrno) << " (errno=" << savedErrno << ") ";

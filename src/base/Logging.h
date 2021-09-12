@@ -107,6 +107,7 @@ inline Logger::LogLevel Logger::logLevel()
 #define LOG_SYSERR DJX::Logger(__FILE__, __LINE__, false).stream()
 #define LOG_SYSFATAL DJX::Logger(__FILE__, __LINE__, true).stream()
 
+const char* strerror_tl(int savedErrno);
 } // namespace DJX
 
 #endif

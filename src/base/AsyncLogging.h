@@ -23,21 +23,15 @@ public:
 			stop();
 		}
 	}
-
+	// 给前端现称调用
 	void append(const char* logline, int len);
 
 	void start()
 	{
-		running_ = true;
-		thread_.start();
-		latch_.wait();
 	}
-
+	
 	void stop()
 	{
-		running_ = false;
-		cond_.notify();
-		thread_.join();
 	}
 private:
 	// 日志线程入口函数
@@ -46,15 +40,19 @@ private:
 	typedef detail::FixedBuffer<detail::kLargeBuffer> Buffer;
 	typedef std::vector<std::unique_ptr<Buffer>> BufferVector;
 	typedef BufferVector::value_type BufferPtr;
-  	
+	// 刷新间隔
 	const int flushInterval_;
 	std::atomic<bool> running_;
+	// 日志滚动大小
 	const off_t rollSize_;
 	Thread thread_;
 	CountDownLatch latch_;
+	// 锁住前后端通信的缓冲区
 	MutexLock mutex_;
 	Condition cond_;
+	// 当前使用缓冲区的指针
 	BufferPtr currentBuffer_;
+	// 预备缓冲区指针
 	BufferPtr nextBuffer_;
 	BufferVector buffers_;
 
