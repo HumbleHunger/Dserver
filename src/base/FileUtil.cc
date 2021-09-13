@@ -13,8 +13,8 @@ namespace DJX
 namespace FileUtil
 {
 
-AppendFile::AppendFile(char* filename)
-	: fp_(::fopen(filename, "ae")),
+AppendFile::AppendFile(std::string filename)
+	: fp_(::fopen(filename.c_str(), "ae")),
 	  writtenBytes_(0)
 {
 	assert(fp_);

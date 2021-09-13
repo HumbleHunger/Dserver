@@ -14,13 +14,14 @@ namespace DJX
 LogFile::LogFile(const std::string& basename,
                  off_t rollSize,
                  bool threadSafe,
-                 int flushInterval,
-                 int checkEveryN)
+                 int flushInterval
+                 /*int checkEveryN*/
+				 )
   : basename_(basename),
     rollSize_(rollSize),
     flushInterval_(flushInterval),
-    checkEveryN_(checkEveryN),
-    count_(0),
+    //checkEveryN_(checkEveryN),
+    //count_(0),
     mutex_(threadSafe ? new MutexLock : NULL),
     start_(0),
     lastRoll_(0),
@@ -61,7 +62,7 @@ void LogFile::append_unlocked(const char* logline, int len)
 {
 	// 将数据写入到文件的写缓冲区
 	file_->append(logline, len);
-	// 如果写入数据大小到达滚动大小
+	// 如果写入数据大小到达滚动大小则滚动日志
 	if (file_->writtenBytes() > rollSize_)
 	{
 		rollFile();
@@ -70,19 +71,19 @@ void LogFile::append_unlocked(const char* logline, int len)
 
 bool LogFile::rollFile()
 {
-  time_t now = 0;
-  string filename = getLogFileName(basename_, &now);
-  time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;
-
-  if (now > lastRoll_)
-  {
-    lastRoll_ = now;
-    lastFlush_ = now;
-    start_ = start;
-    file_.reset(new DJX::FileUtil::AppendFile(filename.c_str()));
-    return true;
-  }
-  return false;
+  	time_t now = 0;
+  	string filename = getLogFileName(basename_, &now);
+  	time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;
+	// 更新滚动时间，滚动日志
+  	if (now > lastRoll_)
+	{
+    	lastRoll_ = now;
+    	lastFlush_ = now;
+    	start_ = start;
+    	file_.reset(new DJX::FileUtil::AppendFile(filename));
+    	return true;
+  	}
+  	return false;
 }
 
 string LogFile::getLogFileName(const string& basename, time_t* now)

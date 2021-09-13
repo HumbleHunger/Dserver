@@ -4,6 +4,7 @@
 #include "noncopyable.h"
 #include <stdio.h>
 #include <sys/types.h>  // for off_t
+#include <string>
 
 namespace DJX
 {
@@ -13,7 +14,7 @@ namespace FileUtil
 class AppendFile : noncopyable
 {
 public:
-	explicit AppendFile(char* filename);
+	explicit AppendFile(std::string filename);
 
 	~AppendFile();
 

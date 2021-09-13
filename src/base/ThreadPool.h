@@ -33,7 +33,7 @@ private:
 	// 线程列表
 	std::vector<std::unique_ptr<Thread>> threads_;
 	// 阻塞队列
-	BlockingQueue<Task> queue_;
+	DJX::BlockingQueue<Task> queue_;
 };
 	
 } // namespace DJX

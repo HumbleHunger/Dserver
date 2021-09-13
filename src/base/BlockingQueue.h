@@ -3,7 +3,6 @@
 
 #include "Condition.h"
 #include "Mutex.h"
-#include "ThreadPool.h"
 
 #include <deque>
 #include <assert.h>
@@ -12,6 +11,7 @@ namespace DJX
 {
 	// 为线程池定制的阻塞队列
 class ThreadPool;
+
 template<typename T>
 class BlockingQueue : noncopyable
 {

@@ -20,8 +20,8 @@ public:
 	LogFile(const std::string& basename,
 			off_t rollSize_,
 			bool threadSafe = true,
-			int flushInterval = 3,
-			int checkEveryN_ = 1024
+			int flushInterval = 3
+			//int checkEveryN_ = 1024
 			);
 	~LogFile();
 	// 对外的append接口，将日志信息添加到文件的写缓冲区
@@ -43,7 +43,7 @@ private:
 	// 写入操作的间隔时间
 	const int flushInterval_;
 	// append的次数
-	int count_;
+	//int count_;
 
 	std::unique_ptr<MutexLock> mutex_;
 	// 日志开始记录的时间（调整为零点）
@@ -55,7 +55,7 @@ private:
 	// 滚动日志的时间间隔
 	const static int kRollPerSeconds_ =  60*60*24;
 	// 滚动日志的append间隔检查
-	int checkEveryN_;
+	//int checkEveryN_;
 
 	std::unique_ptr<FileUtil::AppendFile> file_;
 };
