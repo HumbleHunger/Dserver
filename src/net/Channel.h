@@ -7,6 +7,8 @@
 #include <functional>
 #include <memory>
 
+using std::string;
+
 namespace DJX
 {
 namespace net
@@ -45,10 +47,20 @@ public:
   	bool isWriting() const { return events_ & kWriteEvent; }
   	bool isReading() const { return events_ & kReadEvent; }
 
+	// 在Eventloop和Poller中删除,调用先需确保events_ = 0，即未注册任何监听事件
+	void remove();
+/* 标志位判断 */
+	bool isNoneEvent() const { return events_ == kNoneEvent; }
+/* debug */
+	string reventsToString() const;
+	string eventsToString() const;
 private:
-
+	static string eventsToString(int fd, int ev);
+	// 在Eventloop和Poller中注册Channel
+	void update();
 /* 核心内容 */
 	// Channel所属的loop
+	EventLoop* loop_;
 	// 用于区别返回IO事件类型
 	static const int kNoneEvent;
 	static const int kReadEvent;
@@ -64,8 +76,10 @@ private:
 	EventCallback writeCallback_;
 	EventCallback closeCallback_;
 	EventCallback errorCallback_;
-
-}
+/* 标志位 */
+	bool eventHandling_;
+	bool addedToLoop_;
+};
 
 } // namespace net
 } // namespace DJX
