@@ -39,7 +39,7 @@ public:
 	Timestamp poolReturnTime() const { return poolReturnTime_; }
 
 /* 设置事件接口 */
-	// 在Poller中注册删除关注的事件（Channel）
+	// 在Poller中注册删除或修改关注的事件（Channel）
 	void updateChannel(Channel* channel);
 	void removeChannel(Channel* channel);
 	// 检查是否存在

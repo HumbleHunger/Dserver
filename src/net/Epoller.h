@@ -38,6 +38,8 @@ public:
 private:
 	typedef std::map<int, Channel*> ChannelMap;
 	typedef std::vector<struct epoll_event> EventList;
+	// for debug
+	static const char* operationToString(int op);
 	// 初始化监听队列大小
 	static const int kInitEventListSize = 16;
 	// 返回就绪事件
@@ -52,7 +54,6 @@ private:
 	EventList events_;
 	// epollfd
 	int epollfd_;
-	// 返回的活动事件
 	// 所属loop
 	EventLoop* ownerLoop_;
 };

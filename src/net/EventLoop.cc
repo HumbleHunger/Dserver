@@ -1,6 +1,6 @@
 #include "EventLoop.h"
 #include "Channel.h"
-#include "Poller.h"
+#include "Epoller.h"
 #include "SocketsOps.h"
 //#include "TimerQueue.h"
 
@@ -16,7 +16,7 @@ namespace DJX
 {
 namespace net
 {
-
+// eventfd用于线程间通信，用来实现IO线程间的唤醒
 int createEventfd()
 {
 	int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
