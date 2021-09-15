@@ -54,6 +54,13 @@ public:
 /* debug */
 	string reventsToString() const;
 	string eventsToString() const;
+
+/* 提供对内部成员的访问 */
+	int fd() const { return fd_; }
+	int events() const { return events_; }
+	void set_revents(int revt) { revents_ = revt; }
+	EventLoop* ownerLoop() { return loop_; }
+
 private:
 	static string eventsToString(int fd, int ev);
 	// 在Eventloop和Poller中注册Channel

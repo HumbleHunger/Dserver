@@ -2,7 +2,7 @@
 #include "Channel.h"
 #include "Poller.h"
 #include "SocketsOps.h"
-#include "TimerQueue.h"
+//#include "TimerQueue.h"
 
 #include "../base/Logging.h"
 #include "../base/Mutex.h"
