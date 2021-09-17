@@ -28,6 +28,11 @@ const struct sockaddr* socketOps::sockaddr_cast(const struct sockaddr_in* addr)
   return static_cast<const struct sockaddr*>(static_cast<const void*>(addr));
 }
 
+struct sockaddr* socketOps::sockaddr_cast(struct sockaddr_in* addr)
+{
+  return static_cast<struct sockaddr*>(static_cast<void*>(addr));
+}
+
 const struct sockaddr_in* socketOps::sockaddr_in_cast(const struct sockaddr* addr)
 {
   return static_cast<const struct sockaddr_in*>(static_cast<const void*>(addr));
@@ -63,7 +68,7 @@ void socketOps::listenOrDie(int sockfd)
   }
 }
 // 接受链接
-int socketOps::accept(int sockfd, struct sockaddr_in6* addr)
+int socketOps::accept(int sockfd, struct sockaddr_in* addr)
 {
   socklen_t addrlen = static_cast<socklen_t>(sizeof *addr);
   
