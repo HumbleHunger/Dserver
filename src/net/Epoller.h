@@ -30,7 +30,7 @@ public:
 	// 注册与删除事件
 	void updateChannel(Channel* channel);
 	void removeChannel(Channel* channel);
-
+	bool hasChannel(Channel* channel) const;
 	void assertInLoopThread() const
 	{
 	    ownerLoop_->assertInLoopThread();

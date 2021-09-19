@@ -38,7 +38,7 @@ EPollPoller::~EPollPoller()
 // 将就绪的channel注册到activeChannels中
 Timestamp EPollPoller::poll(int timeoutMs, ChannelList* activeChannels)
 {
-	LOG_TRACE << "fd total count" << channels_.size();
+	LOG_TRACE << "listen fd total count " << channels_.size();
 
 	int numEvents = ::epoll_wait(epollfd_,
 								&*events_.begin(),
@@ -143,6 +143,14 @@ void EPollPoller::removeChannel(Channel* channel)
 	}
 	channel->set_index(kNew);
 }
+
+bool EPollPoller::hasChannel(Channel* channel) const
+{
+  assertInLoopThread();
+  ChannelMap::const_iterator it = channels_.find(channel->fd());
+  return it != channels_.end() && it->second == channel;
+}
+
 // 对epoll操作的封装。被updateChannel或remove调用，更新epoll中的注册事件
 void EPollPoller::update(int op, Channel* channel)
 {

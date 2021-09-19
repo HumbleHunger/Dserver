@@ -19,7 +19,7 @@ namespace net
 {
 
 class Channel;
-class Poller;
+class EPollPoller;
 class TimerQueue;
 
 class EventLoop : noncopyable
@@ -31,12 +31,14 @@ public:
 	EventLoop();
 	~EventLoop();
 /* 基本接口 */
+	// 获取当前线程的loop
+	static EventLoop* getEventLoopOfCurrentThread();
 	// 开始loop
 	void loop();
 	// 退出loop，可由其他线程调用
 	void quit();
 
-	Timestamp poolReturnTime() const { return poolReturnTime_; }
+	Timestamp pollReturnTime() const { return pollReturnTime_; }
 
 /* 设置事件接口 */
 	// 在Poller中注册删除或修改关注的事件（Channel）
@@ -63,7 +65,7 @@ public:
 	void queueInLoop(Functor cb);
 
 	size_t queueSize() const;
-	// 唤醒poller,一般当执行紧急任务时调用
+	// 唤醒poller,一般当执行任务时调用
 	void wakeup();
 	
 /* 断言在loopThread中 */
@@ -97,14 +99,14 @@ private:
 	// loop所属线程ID
 	const pid_t threadId_;
 	// pool返回的时间
-	Timestamp poolReturnTime_;
+	Timestamp pollReturnTime_;
 	
 /* 核心内容 */	
 	// Poller
-	std::unique_ptr<Poller> poller_;
+	std::unique_ptr<EPollPoller> poller_;
 	
 	// 时间轮,处理定时事件
-	std::unique_ptr<TimerQueue> timerQueue_;
+	//std::unique_ptr<TimerQueue> timerQueue_;
 
 	// 处理一般事件（socket事件）
 	// poller返回的Channel的列表vector
@@ -118,6 +120,8 @@ private:
 	std::unique_ptr<Channel> wakeupChannel_;
 
 /* 待处理的回调函数列表，使其他线程可往loop线程添加任务，可实现loop线程间通信 */
+	// 锁住loop线程与其他线程通信的vector
+	mutable MutexLock mutex_;
 	std::vector<Functor> pendingFunctors_;
 
 };

@@ -5,6 +5,8 @@
 
 #include <netinet/in.h>
 
+#include <string>
+
 namespace DJX
 {
 namespace net
@@ -12,7 +14,7 @@ namespace net
 
 namespace socketOps
 {
-const struct sockaddr* sockaddr_cast(const struct sockaddr_in6* addr);
+const struct sockaddr* sockaddr_cast(const struct sockaddr_in* addr);
 }
 
 class InetAddress : public copyable
