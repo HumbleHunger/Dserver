@@ -28,14 +28,14 @@ void threadFunc(EventLoop* loop)
 int main()
 {
 	Logger::setLogLevel(Logger::LogLevel::TRACE);
-  printf("main(): pid = %d, tid = %d\n", getpid(), CurrentThread::tid());
+	printf("main(): pid = %d, tid = %d\n", getpid(), CurrentThread::tid());
 
-  assert(EventLoop::getEventLoopOfCurrentThread() == NULL);
-  EventLoop loop;
-  assert(EventLoop::getEventLoopOfCurrentThread() == &loop);
+  	assert(EventLoop::getEventLoopOfCurrentThread() == NULL);
+	EventLoop loop;
+	assert(EventLoop::getEventLoopOfCurrentThread() == &loop);
 
-  Thread thread(std::bind(&threadFunc, &loop));
-  thread.start();
+	Thread thread(std::bind(&threadFunc, &loop));
+	thread.start();
 
-  loop.loop();
+	loop.loop();
 }
