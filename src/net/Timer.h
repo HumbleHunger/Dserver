@@ -19,7 +19,7 @@ public:
 			repeat_(interval > 0.0),
 			sequence_(s_numCreated_.incrementAndGet())
 	{ }
-
+	// 执行定时事件
 	void run() const
 	{
 		callback_();
@@ -35,12 +35,14 @@ public:
 private:
 	// 定时器回调函数
 	const TimerCallback callback_;
+/* 定时器触发时间控制 */
 	// 下一次的（超时）时刻
 	Timestamp expiration_;
 	// （超时）时间间隔。如果是一次性定时器，该值为0
 	const double interval_;
 	// 定时器是否重复使用
 	const bool repeat_;
+	
 	// 定时器序号
 	const int64_t sequence_;
 	// 定时器计数器，当前已经创建的定时器数量

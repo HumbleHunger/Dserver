@@ -11,7 +11,7 @@
 #include "../base/CurrentThread.h"
 #include "../base/Timestamp.h"
 #include "Callbacks.h"
-//#include "TimerId.h"
+#include "TimerId.h"
 
 namespace DJX
 {
@@ -21,6 +21,7 @@ namespace net
 class Channel;
 class EPollPoller;
 class TimerQueue;
+class TimerId;
 
 class EventLoop : noncopyable
 {
@@ -47,7 +48,7 @@ public:
 	// 检查是否存在
 	bool hasChannel(Channel* channel);
 
-/* 定时器任务 
+/* 定时器任务 */
   	// 定时器设置接口
   	TimerId runAt(Timestamp time, TimerCallback cb);
   	// 执行任务在某段时间后
@@ -56,7 +57,6 @@ public:
   	TimerId runEvery(double interval, TimerCallback cb);
   	// 取消定时任务
   	void cancel(TimerId timerId);
-*/
 
 /* 为了执行其它线程分配的任务 */
 	// 在IO线程中执行某个回调函数，使得函数可以跨线程调用
@@ -76,6 +76,7 @@ public:
     		abortNotInLoopThread();
     	}
   	}
+
 	bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
 	
 	bool eventHandling() const { return eventHandling_; }
@@ -106,7 +107,7 @@ private:
 	std::unique_ptr<EPollPoller> poller_;
 	
 	// 时间轮,处理定时事件
-	//std::unique_ptr<TimerQueue> timerQueue_;
+	std::unique_ptr<TimerQueue> timerQueue_;
 
 	// 处理一般事件（socket事件）
 	// poller返回的Channel的列表vector

@@ -10,7 +10,7 @@ namespace net
 {
 
 class Timer;
-
+// Timer的标识类，不直接以Timer*作为标识。而重新封装TimerId使封装性更好
 class TimerId : public DJX::copyable
 {
 public:
@@ -27,7 +27,7 @@ public:
 	friend class TimerQueue;
 private:
 	Timer* timer_;
-	// 定时器序号
+	// 定时器序号，为什么不用TimerStamp因为TimerStamp会变化
 	int64_t sequence_;
 };
 

@@ -15,6 +15,7 @@
 		"sstream": "cpp",
 		"streambuf": "cpp",
 		"string": "cpp",
-		"vector": "cpp"
+		"vector": "cpp",
+		"unordered_map": "cpp"
 	}
 }
