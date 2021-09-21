@@ -25,6 +25,8 @@ public:
     	:	addr_(addr)
 	{ }
 
+	explicit InetAddress(uint16_t port = 0, bool loopbackOnly = false);
+
 	InetAddress(const char* ip, uint16_t port);
 
 	const struct sockaddr* getSockAddr() const { return socketOps::sockaddr_cast(&addr_); }
