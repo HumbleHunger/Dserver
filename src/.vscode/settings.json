@@ -16,6 +16,8 @@
 		"streambuf": "cpp",
 		"string": "cpp",
 		"vector": "cpp",
-		"unordered_map": "cpp"
+		"unordered_map": "cpp",
+		"iosfwd": "cpp",
+		"limits": "cpp"
 	}
 }
