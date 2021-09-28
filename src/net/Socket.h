@@ -34,9 +34,9 @@ public:
 	void setReusePort(bool on);
 	
 	void shutdownWrite();
-	// 设置不使用nagle算法
+	// 设置nagle算法启用
 	void setTcpNoDelay(bool on);
-	// 开启keepAlive机制
+	// 设置keepAlive机制启用
 	void setKeepAlive(bool on);
 
 	int fd() const { return sockfd_; }

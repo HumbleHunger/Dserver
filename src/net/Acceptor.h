@@ -34,7 +34,7 @@ public:
 	bool listening() const { return listening_; }
 
 private:
-	// 监听socket的回调函数，accept新链接
+	// 往下层channel注册的回调函数，accept新链接
 	void handleRead();
 
 	EventLoop* loop_;
@@ -42,7 +42,7 @@ private:
 	Socket acceptSocket_;
 	Channel acceptChannel_;
 
-	// 处理新链接的回调函数
+	// 上层设置的处理新链接的回调函数
 	NewConnectionCallback newConnectionCallback_;
 
 	bool listening_;

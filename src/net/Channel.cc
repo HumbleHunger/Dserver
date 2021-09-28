@@ -62,7 +62,7 @@ void Channel::handleEvent(Timestamp receiveTime)
 	// 可写事件
 	if (revents_ & POLLOUT)
 	{
-	if (writeCallback_) writeCallback_();
+		if (writeCallback_) writeCallback_();
 	}
 
 	eventHandling_ = false;
