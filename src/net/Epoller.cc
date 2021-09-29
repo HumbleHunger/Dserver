@@ -151,12 +151,14 @@ bool EPollPoller::hasChannel(Channel* channel) const
   return it != channels_.end() && it->second == channel;
 }
 
-// 对epoll操作的封装。被updateChannel或remove调用，更新epoll中的注册事件
+// 对epoll操作的封装。被updateChannel或removeChannel调用，更新epoll中的注册事件
 void EPollPoller::update(int op, Channel* channel)
 {
 	struct epoll_event event;
 	memset(&event, 0, sizeof event);
+	// 获取需要监听的事件
 	event.events = channel->events();
+	// 将fd的events.data.ptr与channel绑定
 	event.data.ptr = channel;
 	int fd = channel->fd();
 	LOG_TRACE << "epoll_ctl op = " << operationToString(op)

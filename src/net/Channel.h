@@ -77,7 +77,7 @@ private:
 	static const int kNoneEvent;
 	static const int kReadEvent;
 	static const int kWriteEvent;
-
+	// 底层的socket
 	const int fd_;
 	// 需要监听的IO事件类型，往poller中注册的事件
 	int events_;

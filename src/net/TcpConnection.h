@@ -46,7 +46,11 @@ public:
 	// 当新链接出现时调用
 	void connectEstablished();
 	// 当链接销毁时调用
-	void connectDestroyed(); 
+	void connectDestroyed();
+/* 链接状态设置接口 */
+	bool connected() const { return state_ == kConnected; }
+	bool disconnected() const { return state_ == kDisconnected; }
+
 /* 设置回调接口 */
 	void setConnectionCallback(const ConnectionCallback& cb)
 	{ connectionCallback_ = cb; }
@@ -57,9 +61,13 @@ public:
 	void setWriteCompleteCallback(const WriteCompleteCallback& cb)
 	{ writeCompleteCallback_ = cb; }
 
+	void setCloseCallback(const CloseCallback& cb)
+  	{ closeCallback_ = cb; }
+
 //	void setHighWaterMarkCallback(const HighWaterMarkCallback& cb, size_t highWaterMark)
 //	{ highWaterMarkCallback_ = cb; highWaterMark_ = highWaterMark; }
 /* 访问私有信息接口 */
+	bool isReading() const { return reading_; };
 	EventLoop* getLoop() const { return loop_; }
 	const InetAddress& localAddress() const { return localAddr_; }
 	const InetAddress& peerAddress() const { return peerAddr_; }
@@ -73,6 +81,8 @@ public:
 private:
 	// 链接状态：析构设置未链接，构造时设置正在链接，已链接，正在关闭链接
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
+	// debug
+	const char* stateToString() const;
 
 	// 设置到Channel中的回调函数
 	void handleRead(Timestamp receiveTime);
@@ -80,11 +90,21 @@ private:
 	void handleClose();
 	void handleError();
 
+/* inloop回调函数 */
+	void startReadInLoop();
+	void stopReadInLoop();
+	
+	void sendInLoop(string&& message);
+	void sendInLoop(const void* message, size_t len);
+	
+	void shutdownInLoop();
+
 /* 核心内容 */
 	// 所属loop
 	EventLoop* loop_;
 	// 链接状态
 	StateE state_;
+	bool reading_;
 	// 底层socket
 	std::unique_ptr<Socket> socket_;
 	std::unique_ptr<Channel> channel_;
@@ -113,8 +133,6 @@ private:
 	size_t highWaterMark_;
 */
 };
-
-
 
 } // namespace net
 } // namespace DJX

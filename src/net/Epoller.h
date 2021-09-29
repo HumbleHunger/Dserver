@@ -36,6 +36,7 @@ public:
 	    ownerLoop_->assertInLoopThread();
 	}
 private:
+	// socket与Channel的映射
 	typedef std::map<int, Channel*> ChannelMap;
 	typedef std::vector<struct epoll_event> EventList;
 	// for debug
