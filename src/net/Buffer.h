@@ -119,7 +119,18 @@ public:
 	    // 调整写位置
 	    hasWritten(len);
 	}
-
+/*
+	void append(string&& data)
+	{
+	    // 确保空间充足
+	 	size_t len = data.size();
+		ensureWritableBytes(len);
+	    // 写入到Buffer中
+	    std::copy(data.data(), data.data() + len, beginWrite());
+	    // 调整写位置
+	    hasWritten(len);
+	}
+*/
 /* read接口 */
 	ssize_t readFd(int fd, int* savedErrno);
 

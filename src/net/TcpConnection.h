@@ -36,9 +36,9 @@ public:
 	void startRead();
 	void stopRead();
 
-	void send(string&& message);
+	void send(const string& message);
 	void send(const void* message, int len);
-	void send(Buffer&& message);
+	void send(Buffer& message);
 
 	void shutdown();
 
@@ -64,8 +64,8 @@ public:
 	void setCloseCallback(const CloseCallback& cb)
   	{ closeCallback_ = cb; }
 
-//	void setHighWaterMarkCallback(const HighWaterMarkCallback& cb, size_t highWaterMark)
-//	{ highWaterMarkCallback_ = cb; highWaterMark_ = highWaterMark; }
+	void setHighWaterMarkCallback(const HighWaterMarkCallback& cb, size_t highWaterMark)
+	{ highWaterMarkCallback_ = cb; highWaterMark_ = highWaterMark; }
 /* 访问私有信息接口 */
 	bool isReading() const { return reading_; };
 	EventLoop* getLoop() const { return loop_; }
@@ -81,6 +81,7 @@ public:
 private:
 	// 链接状态：析构设置未链接，构造时设置正在链接，已链接，正在关闭链接
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
+	void setState(StateE s) { state_ = s; }
 	// debug
 	const char* stateToString() const;
 
@@ -94,7 +95,7 @@ private:
 	void startReadInLoop();
 	void stopReadInLoop();
 	
-	void sendInLoop(string&& message);
+	void sendInLoop(const string& message);
 	void sendInLoop(const void* message, size_t len);
 	
 	void shutdownInLoop();
@@ -125,13 +126,12 @@ private:
 	WriteCompleteCallback writeCompleteCallback_;
 	// 链接关闭时的回调函数
 	CloseCallback closeCallback_;
-/*
+
+/* 为了处理当写入数据太快导致的数据堆积 */
 	// output buffer的高水位回调函数
 	HighWaterMarkCallback highWaterMarkCallback_;
-	CloseCallback closeCallback_;
 	// output buffer的高水位数值
 	size_t highWaterMark_;
-*/
 };
 
 } // namespace net
