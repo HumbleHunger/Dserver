@@ -61,6 +61,12 @@ public:
 	void set_revents(int revt) { revents_ = revt; }
 	EventLoop* ownerLoop() { return loop_; }
 
+	void tie(const std::shared_ptr<void>& obj)
+	{
+		tie_ = obj;
+		tied_ = true;
+	}
+
 /* for poller */
   // 关于channel是否被添加到epoll中的标志位
   int index() { return index_; }
@@ -88,6 +94,9 @@ private:
 	EventCallback writeCallback_;
 	EventCallback closeCallback_;
 	EventCallback errorCallback_;
+/* 保存上层TcpConnection的虚指针 */
+	std::weak_ptr<void> tie_;
+	bool tied_;
 /* 标志位 */
 	bool eventHandling_;
 	bool addedToLoop_;

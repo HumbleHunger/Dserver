@@ -37,8 +37,18 @@ Channel::~Channel()
 
 void Channel::handleEvent(Timestamp receiveTime)
 {
+	// 用以保存tied_提升后获取的智能指针，在链接关闭时，可以保证调用的Tcpconnection对象一直存在
+	std::shared_ptr<void> guard;
+	if (tied_)
+	{
+		guard = tie_.lock();
+		if (!guard) 
+		{
+			LOG_WARN << "TcpConnection has dead in handleEvent which channel of fd = " << fd_;
+			return;
+		}
+	}
 	eventHandling_ = true;
-
 	LOG_TRACE << reventsToString();
 	// 链接中断
 	if ((revents_ & POLLHUP) && !(revents_ & POLLIN))

@@ -42,7 +42,6 @@ public:
 
 	void shutdown();
 
-	void forceClose();
 	// 当新链接出现时调用
 	void connectEstablished();
 	// 当链接销毁时调用

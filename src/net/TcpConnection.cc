@@ -171,12 +171,12 @@ void TcpConnection::stopRead()
 
 void TcpConnection::stopReadInLoop()
 {
-  loop_->assertInLoopThread();
-  if (reading_ || channel_->isReading())
-  {
-    channel_->disableReading();
-    reading_ = false;
-  }
+	loop_->assertInLoopThread();
+	if (reading_ || channel_->isReading())
+	{
+	    channel_->disableReading();
+	    reading_ = false;
+	}
 }
 
 void TcpConnection::shutdown()
@@ -185,16 +185,127 @@ void TcpConnection::shutdown()
 	{
 		// 调整状态为正在断开链接状态
 		setState(kDisconnecting);
-		loop_->runInloop(std::bind(&TcpConnection::shutdownInLoop, this));
+		loop_->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));
 	}
 }
 
 void TcpConnection::shutdownInLoop()
 {
-  loop_->assertInLoopThread();
-  // 如果未关注write事件则关闭fd的写端，如果仍在关注写事件则仅仅把链接状态改为正在关闭链接
-  if (!channel_->isWriting())
-  {
-    socket_->shutdownWrite();
-  }
+	loop_->assertInLoopThread();
+	// 如果未关注write事件则关闭fd的写端，如果仍在关注写事件则仅仅把链接状态改为正在关闭链接
+	if (!channel_->isWriting())
+	{
+	    socket_->shutdownWrite();
+	}
+}
+
+// 当TcpServer接收新链接时调用，设置链接状态和开启channel_read
+void TcpConnection::connectEstablished()
+{
+	loop_->assertInLoopThread();
+	assert(state_ == kConnecting);
+	// 设置状态为已链接
+	setState(kConnected);
+	// 设置channel的tie
+	channel_->tie(shared_from_this());
+	// 将TcpConnection所对应通道加入到Poller中关注
+	channel_->enableReading();
+	// 回调callback
+	connectionCallback_(shared_from_this());
+}
+
+// 当TcpServer销毁链接时调用
+void TcpConnection::connectDestroyed()
+{
+	loop_->assertInLoopThread();
+	if (state_ == kConnected)
+	{
+		setState(kDisconnected);
+		channel_->disableAll();
+
+		connectionCallback_(shared_from_this());
+	}
+	// 从Poller中移除
+	channel_->remove();
+}
+
+void TcpConnection::handleRead(Timestamp receiveTime)
+{
+	loop_->assertInLoopThread();
+	int savedErrno = 0;
+	// 将数据从socket中读入inputBuffer
+	ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+	if (n > 0)
+	{
+		// 调用上层TcpServer注册的消息回调函数
+		messageCallback_(shared_from_this(), &inputBuffer_, receiveTime);
+	}
+	else if (n == 0)
+	{
+		// n=0意味着对端关闭
+		handleClose();
+	}
+	else
+	{
+		errno = savedErrno;
+		LOG_SYSERR << "TcpConnection::handleRead";
+		handleError();
+	}
+}
+
+void TcpConnection::handleWrite()
+{
+	loop_->assertInLoopThread();
+	if (channel_->isWriting())
+	{
+		// 将输出Buffer的数据写入socket
+		ssize_t n = socketOps::write(channel_->fd(), outputBuffer_.peek(), outputBuffer_.readableBytes());
+		if (n > 0)
+		{
+			// 取出已写入的数据
+			outputBuffer_.retrieve(n);
+			// 如果输出缓冲区的内容全部写完
+			if (outputBuffer_.readableBytes() == 0)
+			{
+				channel_->disableWriting();
+				if (writeCompleteCallback_)
+				{
+					loop_->queueInLoop(std::bind(writeCompleteCallback_, shared_from_this()));
+				}
+				// 如果链接状态为正在关闭，则在写完数据后关闭链接
+				if (state_ == kDisconnecting)
+				{
+					shutdownInLoop();
+				}
+			}
+		}
+		else
+		{
+			LOG_SYSERR << "TcpConnection::handleWrite";
+		}
+	}
+	else
+	{
+	    LOG_TRACE << "Connection fd = " << channel_->fd()
+	              << " is down, no more writing";
+	}
+}
+
+void TcpConnection::handleClose()
+{
+	loop_->assertInLoopThread();
+	LOG_TRACE << "fd = " << channel_->fd() << " state = " << stateToString();
+	assert(state_ == kConnected || state_ == kDisconnecting);
+
+	setState(kDisconnected);
+	channel_->disableAll();
+	
+	TcpConnectionPtr guardThis(shared_from_this());
+	closeCallback_(guardThis);
+}
+
+void TcpConnection::handleError()
+{
+	int err = socketOps::getSocketError(channel_->fd());
+  	LOG_ERROR << "TcpConnection::handleError SO_ERROR = " << err << " " << strerror_tl(err);
 }
