@@ -214,7 +214,7 @@ void TcpConnection::connectEstablished()
 	connectionCallback_(shared_from_this());
 }
 
-// 当TcpServer销毁链接时调用
+// 当TcpServer调用removeTcpConnection时调用
 void TcpConnection::connectDestroyed()
 {
 	loop_->assertInLoopThread();
@@ -225,7 +225,7 @@ void TcpConnection::connectDestroyed()
 
 		connectionCallback_(shared_from_this());
 	}
-	// 从Poller中移除
+	// 将channel从Poller中移除
 	channel_->remove();
 }
 
@@ -296,11 +296,12 @@ void TcpConnection::handleClose()
 	loop_->assertInLoopThread();
 	LOG_TRACE << "fd = " << channel_->fd() << " state = " << stateToString();
 	assert(state_ == kConnected || state_ == kDisconnecting);
-
+	// 关闭channel
 	setState(kDisconnected);
 	channel_->disableAll();
 	
 	TcpConnectionPtr guardThis(shared_from_this());
+	// 调用TcpServer注册的回调函数删除TcpConnectuon
 	closeCallback_(guardThis);
 }
 
