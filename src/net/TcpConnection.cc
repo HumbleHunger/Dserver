@@ -310,3 +310,20 @@ void TcpConnection::handleError()
 	int err = socketOps::getSocketError(channel_->fd());
   	LOG_ERROR << "TcpConnection::handleError SO_ERROR = " << err << " " << strerror_tl(err);
 }
+
+const char* TcpConnection::stateToString() const
+{
+  switch (state_)
+  {
+    case kDisconnected:
+      return "kDisconnected";
+    case kConnecting:
+      return "kConnecting";
+    case kConnected:
+      return "kConnected";
+    case kDisconnecting:
+      return "kDisconnecting";
+    default:
+      return "unknown state";
+  }
+}

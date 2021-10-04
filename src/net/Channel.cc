@@ -24,6 +24,7 @@ Channel::Channel(EventLoop* loop, int fd)
 		revents_(0),
 		index_(-1),
 		eventHandling_(false),
+		tied_(0),
 		addedToLoop_(false)
 {
 }

@@ -19,9 +19,8 @@ class EventLoopThread : noncopyable
 public:
 	EventLoopThread(const InetAddress& listenAddr);
 	~EventLoopThread();
-	void startLoop();
+	EventLoop* startLoop();
 
-	EventLoop* getLoop() { if (thread_.started()) return loop_; }
 private:
 	void threadFunc();
 
@@ -31,6 +30,9 @@ private:
 	EventLoop* loop_;
 	// 线程
 	Thread thread_;
+	// 同步控制loop在线程中生成后注册loop_
+	MutexLock mutex_;
+	Condition cond_;
 };
 
 }
