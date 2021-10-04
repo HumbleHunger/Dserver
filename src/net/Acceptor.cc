@@ -39,6 +39,7 @@ void Acceptor::listen()
 	acceptSocket_.listen();
 	// 打开acceptor的读通道
 	acceptChannel_.enableReading();
+	LOG_INFO << "Thread " << CurrentThread::tid() << ": Acceptor of EventLoop " << loop_ << " is listening";
 }
 
 void Acceptor::handleRead()
