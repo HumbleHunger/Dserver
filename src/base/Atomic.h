@@ -18,7 +18,7 @@ public:
     : value_(0)
 	{
   	}
-	// 原子比较操作，返回value的值
+	// 原子操作，返回value的值
   	T get()
   	{
     	// in gcc >= 4.7: __atomic_load_n(&value_, __ATOMIC_SEQ_CST)

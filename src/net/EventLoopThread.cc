@@ -6,9 +6,8 @@
 using namespace DJX;
 using namespace DJX::net;
 
-EventLoopThread::EventLoopThread(const InetAddress& listenAddr)
+EventLoopThread::EventLoopThread()
     :   exiting_(false),
-        listenAddr_(listenAddr),
         loop_(NULL),
         mutex_(),
         cond_(mutex_),
@@ -37,8 +36,6 @@ void EventLoopThread::threadFunc()
         cond_.notify();
     }
 
-    Acceptor acceptor(&loop, listenAddr_, true);
-    acceptor.listen();
     loop.loop();
 
     MutexLockGuard lock(mutex_);

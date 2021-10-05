@@ -9,8 +9,9 @@
 using namespace DJX;
 using namespace DJX::net;
 
-TcpServer::TcpServer(const InetAddress& listenAddr)
+TcpServer::TcpServer(EventLoop* loop, const InetAddress& listenAddr)
 	:	listenAddr_(listenAddr),
+		loop_(loop),
 		ipPort_(listenAddr.toIpPort()),
 		IOthreadPool_(new EventLoopThreadPool())
 {
@@ -59,6 +60,9 @@ void TcpServer::newConnection(EventLoop* loop, int sockfd, const InetAddress& pe
 	conn->setMessageCallback(messageCallback_);
 	conn->setWriteCompleteCallback(writeCompleteCallback_);
 	conn->setCloseCallback(std::bind(&TcpServer::removeConnection, this, std::placeholders::_1));
+	// 将Tcpconnection保存到TcpServer中
+	connections_[conn.get()] = conn;
+	
 	// 将新建的Tcpconnection的channel加入到所属的IO线程loop中的Poller中关注
 	loop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
 }
@@ -66,8 +70,16 @@ void TcpServer::newConnection(EventLoop* loop, int sockfd, const InetAddress& pe
 // 被下层Tcpconection::handleclose调用，删除链接
 void TcpServer::removeConnection(const TcpConnectionPtr& conn)
 {
-	LOG_INFO << "TcpServer::removeConnectionInLoop connection ";
+	loop_->runInLoop(std::bind(&TcpServer::removeConnectionInLoop, this, conn));
+}
+
+void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn)
+{
+	loop_->assertInLoopThread();
+	LOG_INFO << "TcpServer::removeConnectionInLoop - connection " << conn.get();
+	size_t n = connections_.erase(conn.get());
+	(void)n;
+	assert(n == 1);
 	EventLoop* ioLoop = conn->getLoop();
-	// 将链接和Channel销毁的函数放入loop中的待处理队列
 	ioLoop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
 }

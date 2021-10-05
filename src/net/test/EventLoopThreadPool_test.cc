@@ -27,30 +27,30 @@ int main()
 	//Logger::setLogLevel(Logger::LogLevel::TRACE);
 	print();
 
-	InetAddress addr("127.0.0.1", 8000);
   {
-    EventLoopThreadPool model(addr);
+    EventLoopThreadPool model;
     model.setThreadNum(2);
     model.start();
   }
 
   {
     printf("Another thread:\n");
-    EventLoopThreadPool model(addr);
+    EventLoopThreadPool model;
     model.setThreadNum(1);
     model.start();
     std::vector<EventLoop*> Loops = model.getAllLoops();
     Loops[0]->runAfter(2, std::bind(print, Loops[0]));
-    ::sleep(3);
+    sleep(2);
   }
 
   {
     printf("Three threads:\n");
-    EventLoopThreadPool model(addr);
+    EventLoopThreadPool model;
     model.setThreadNum(3);
     model.start();
     std::vector<EventLoop*> Loops = model.getAllLoops();
     Loops[0]->runAfter(2, std::bind(print, Loops[0]));
+    sleep(3);
   }
-  sleep(20);
+  sleep(2);
 }

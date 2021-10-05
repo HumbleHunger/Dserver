@@ -18,12 +18,12 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reusepor
 		acceptSocket_(socketOps::createNonblockingOrDie(listenAddr.family())),
 		acceptChannel_(loop, acceptSocket_.fd()),
 		listening_(false)
-		//idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
 	acceptSocket_.setReuseAddr(true);
 	acceptSocket_.setReusePort(reuseport);
 	acceptSocket_.bindAddress(listenAddr);
 	acceptChannel_.setReadCallback(std::bind(&Acceptor::handleRead, this));
+	LOG_INFO << "ipadress is " << listenAddr.toIpPort();
 }
 
 Acceptor::~Acceptor()
@@ -39,7 +39,7 @@ void Acceptor::listen()
 	acceptSocket_.listen();
 	// 打开acceptor的读通道
 	acceptChannel_.enableReading();
-	LOG_INFO << "Thread " << CurrentThread::tid() << ": Acceptor of EventLoop " << loop_ << " is listening";
+	LOG_INFO << "Thread " << CurrentThread::tid() << ": Acceptor of thread " << CurrentThread::tid() << " is listening";
 }
 
 void Acceptor::handleRead()

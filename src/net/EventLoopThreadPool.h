@@ -22,7 +22,7 @@ class EventLoop;
 class EventLoopThreadPool : noncopyable
 {
 public:
-	EventLoopThreadPool(const InetAddress& listenAddr);
+	EventLoopThreadPool();
 	~EventLoopThreadPool() = default;
 
 	void setThreadNum(int numThreads) { numThreads_ = numThreads; }
@@ -33,7 +33,6 @@ public:
 
 	std::vector<EventLoop*> getAllLoops();
 private:
-	InetAddress listenAddr_;
 	bool started_;
 	int numThreads_;
 	// IO线程管理队列

@@ -46,7 +46,6 @@ private:
 	NewConnectionCallback newConnectionCallback_;
 
 	bool listening_;
-	//int idleFd_;
 };
 
 } // namespace net

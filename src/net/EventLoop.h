@@ -22,6 +22,7 @@ class Channel;
 class EPollPoller;
 class TimerQueue;
 class TimerId;
+class Acceptor;
 
 class EventLoop : noncopyable
 {
@@ -40,6 +41,8 @@ public:
 	void quit();
 
 	Timestamp pollReturnTime() const { return pollReturnTime_; }
+
+	void setAcceptor(std::unique_ptr<Acceptor>&& acceptor);
 
 /* 设置事件接口 */
 	// 在Poller中注册删除或修改关注的事件（Channel）
@@ -105,7 +108,9 @@ private:
 /* 核心内容 */	
 	// Poller
 	std::unique_ptr<EPollPoller> poller_;
-	
+
+	// Acceptor
+	std::unique_ptr<Acceptor> acceptor_;	
 	// 时间轮,处理定时事件
 	std::unique_ptr<TimerQueue> timerQueue_;
 

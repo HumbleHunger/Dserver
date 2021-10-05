@@ -29,12 +29,12 @@ int main()
 
 	InetAddress addr("127.0.0.1", 8000);
 	{
-		EventLoopThread thr1(addr);  // never start
+		EventLoopThread thr1;  // never start
 	}
 
   {
   // dtor calls quit()
-  EventLoopThread thr2(addr);
+  EventLoopThread thr2;
   EventLoop* loop = thr2.startLoop();
   loop->runInLoop(std::bind(print, loop));
   sleep(1);
@@ -42,7 +42,7 @@ int main()
 
   {
   // quit() before dtor
-  EventLoopThread thr3(addr);
+  EventLoopThread thr3;
   EventLoop* loop = thr3.startLoop();
   loop->runInLoop(std::bind(&quit, loop));
   sleep(1);

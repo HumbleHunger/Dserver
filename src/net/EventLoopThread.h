@@ -17,7 +17,7 @@ namespace net
 class EventLoopThread : noncopyable
 {
 public:
-	EventLoopThread(const InetAddress& listenAddr);
+	EventLoopThread();
 	~EventLoopThread();
 	EventLoop* startLoop();
 
@@ -25,7 +25,6 @@ private:
 	void threadFunc();
 
 	bool exiting_;
-	InetAddress listenAddr_;
 
 	EventLoop* loop_;
 	// 线程

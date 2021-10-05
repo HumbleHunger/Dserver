@@ -19,7 +19,7 @@ class EventLoopThreadPool;
 class TcpServer : noncopyable
 {
 public:
-	TcpServer(const InetAddress& listenAddr);
+	TcpServer(EventLoop* loop, const InetAddress& listenAddr);
 	~TcpServer();
 /* 主要接口 */
 	// 设置IO线程池的线程数目
@@ -43,7 +43,10 @@ public:
 
 	const string& ipPort() const { return ipPort_; }
 
+	EventLoop* getLoop() const { return loop_; }
+
 private:
+	typedef std::map<TcpConnection*, TcpConnectionPtr> TcpConnectionMap;
 	// 注册到acceptor中的回调函数，对新链接进行初始化（创建新链接，注册回调函数等）
 	void newConnection(EventLoop* loop, int sockfd, const InetAddress& peerAddr);
 	// 被下层类TcpConnection回调，处理链接关闭
@@ -54,6 +57,10 @@ private:
 	InetAddress listenAddr_;
 
 	const string ipPort_;
+
+	EventLoop* loop_;
+
+	TcpConnectionMap connections_;
 	std::shared_ptr<EventLoopThreadPool> IOthreadPool_;
 	// 新链接时的回调函数,由用户注册
 	ConnectionCallback connectionCallback_;

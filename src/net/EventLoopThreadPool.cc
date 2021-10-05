@@ -7,9 +7,8 @@
 using namespace DJX;
 using namespace DJX::net;
 
-EventLoopThreadPool::EventLoopThreadPool(const InetAddress& listenAddr)
-	:	listenAddr_(listenAddr),
-		started_(false),
+EventLoopThreadPool::EventLoopThreadPool()
+	:	started_(false),
 		numThreads_(0)
 {
 }
@@ -24,7 +23,7 @@ void EventLoopThreadPool::start()
 	for (int i = 0; i < numThreads_; ++i)
 	{
 		// 创建IO线程对象并保存到线程池的IO线程管理队列中
-		EventLoopThread* t = new EventLoopThread(listenAddr_);
+		EventLoopThread* t = new EventLoopThread();
 		threads_.push_back(std::unique_ptr<EventLoopThread>(t));
 		// 开始IO线程，创建并返回IO线程的loop
 		loops_.push_back(t->startLoop());

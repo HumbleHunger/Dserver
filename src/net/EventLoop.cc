@@ -3,6 +3,7 @@
 #include "Epoller.h"
 #include "SocketOps.h"
 #include "TimerQueue.h"
+#include "Acceptor.h"
 
 #include "../base/Logging.h"
 #include "../base/Mutex.h"
@@ -124,6 +125,16 @@ void EventLoop::quit()
 	{
 		wakeup();
 	}
+}
+
+void EventLoop::setAcceptor(std::unique_ptr<Acceptor>&& acceptor)
+{
+	// 转移所有权
+	acceptor_ = std::forward<std::unique_ptr<Acceptor>>(acceptor);
+	
+	assert(!acceptor_->listening());
+	// 使acceptor开始监听,并在Poller中设置关注读事件
+	runInLoop(std::bind(&Acceptor::listen, acceptor_.get()));
 }
 
 /* 设置事件接口 */
