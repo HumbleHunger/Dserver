@@ -23,6 +23,7 @@ EPollPoller::EPollPoller(EventLoop* loop)
 		epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
     	events_(kInitEventListSize)
 {
+	LOG_DEBUG << "Thread " << CurrentThread::tid() << " : epoll  fd = " << epollfd_ << " create ";
 	if (epollfd_ < 0)
 	{
 	    LOG_SYSFATAL << "EPollPoller::EPollPoller";

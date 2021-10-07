@@ -49,7 +49,7 @@ class EchoServer
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp time)
   {
     string msg(buf->retrieveAllAsString());
-    LOG_TRACE << conn.get() << " recv " << msg.size() << " bytes at " << time.toString();
+    LOG_INFO << conn.get() << " recv " << msg.size() << " bytes at " << time.toString();
     if (msg == "exit\n")
     {
       conn->send("bye\n");
@@ -68,7 +68,7 @@ class EchoServer
 
 int main(int argc, char* argv[])
 {
-	Logger::setLogLevel(Logger::LogLevel::TRACE);
+	//Logger::setLogLevel(Logger::LogLevel::TRACE);
   LOG_INFO << "pid = " << getpid() << ", tid = " << CurrentThread::tid();
   LOG_INFO << "sizeof TcpConnection = " << sizeof(TcpConnection);
   if (argc > 1)
