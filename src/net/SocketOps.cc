@@ -10,6 +10,8 @@
 #include <sys/uio.h>  // readv
 #include <unistd.h>
 
+#include <iostream>
+
 using namespace DJX;
 using namespace DJX::net;
 /*
@@ -74,6 +76,7 @@ int socketOps::accept(int sockfd, struct sockaddr_in* addr)
   
   int connfd = ::accept4(sockfd, sockaddr_cast(addr),
                          &addrlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
+  //std::cout << "accept fd = " << connfd << std::endl;
   if (connfd < 0)
   {
     int savedErrno = errno;

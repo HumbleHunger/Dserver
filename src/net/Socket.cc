@@ -8,12 +8,15 @@
 #include <netinet/tcp.h>
 #include <stdio.h>  // snprintf
 
+#include <iostream>
+
 namespace DJX
 {
 namespace net
 {
 Socket::~Socket()
 {
+	//std::cout << "close fd " << sockfd_ << std::endl;
 	socketOps::close(sockfd_);
 }
 

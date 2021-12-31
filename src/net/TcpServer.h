@@ -3,6 +3,7 @@
 
 #include "../base/Atomic.h"
 #include "TcpConnection.h"
+#include "../base/Mutex.h"
 
 #include <map>
 
@@ -60,14 +61,16 @@ private:
 
 	EventLoop* loop_;
 
+	MutexLock mutex_;
 	TcpConnectionMap connections_;
+	
 	std::shared_ptr<EventLoopThreadPool> IOthreadPool_;
 	// 新链接时的回调函数,由用户注册
 	ConnectionCallback connectionCallback_;
 	// 有消息到来时的回调函数
 	MessageCallback messageCallback_;
 	// socket数据写入内核完成时的回调函数
-  	WriteCompleteCallback writeCompleteCallback_;
+  WriteCompleteCallback writeCompleteCallback_;
 	AtomicInt32 started_;
 };
 } // namespace net

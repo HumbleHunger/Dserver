@@ -77,6 +77,14 @@ public:
 	Buffer* outputBuffer()
 	{ return &outputBuffer_; }
 
+	void setContext(const boost::any& context)
+  { context_ = context; }
+
+  const boost::any& getContext() const
+  { return context_; }
+
+  boost::any* getMutableContext()
+  { return &context_; }
 private:
 	// 链接状态：析构设置未链接，构造时设置正在链接，已链接，正在关闭链接
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
@@ -131,6 +139,8 @@ private:
 	HighWaterMarkCallback highWaterMarkCallback_;
 	// output buffer的高水位数值
 	size_t highWaterMark_;
+
+	boost::any context_;
 };
 
 } // namespace net

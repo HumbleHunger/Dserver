@@ -46,4 +46,4 @@ inline uint16_t networkToHost16(uint16_t net16)
 }  // namespace net
 }  // namespace DJX
 
-#endif  // MUDUO_NET_ENDIAN_H
+#endif  // DJX_NET_ENDIAN_H
