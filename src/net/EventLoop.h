@@ -64,7 +64,7 @@ public:
 /* 为了执行其它线程分配的任务 */
 	// 在IO线程中执行某个回调函数，使得函数可以跨线程调用
 	void runInLoop(Functor cb);
-	// 
+	// 被其它线程时，将任务加入到待处理队列
 	void queueInLoop(Functor cb);
 
 	size_t queueSize() const;

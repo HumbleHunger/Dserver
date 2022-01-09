@@ -19,6 +19,7 @@ namespace net
 
 class EventLoop;
 
+// 并非真正意义上的线程池，线程的主循环是eventloop。为了Tcpserver管理IO线程
 class EventLoopThreadPool : noncopyable
 {
 public:

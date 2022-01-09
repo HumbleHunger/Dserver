@@ -214,7 +214,7 @@ void TcpConnection::connectEstablished()
 	connectionCallback_(shared_from_this());
 }
 
-// 当TcpServer调用removeTcpConnection时调用
+// 当调用TcpServer::removeTcpConnection时调用
 void TcpConnection::connectDestroyed()
 {
 	loop_->assertInLoopThread();

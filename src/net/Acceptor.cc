@@ -17,8 +17,10 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reusepor
 		// 创建socket
 		acceptSocket_(socketOps::createNonblockingOrDie(listenAddr.family())),
 		acceptChannel_(loop, acceptSocket_.fd()),
-		listening_(false)
+		listening_(false),
+    idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
+  assert(idleFd_ >= 0);
 	acceptSocket_.setReuseAddr(true);
 	acceptSocket_.setReusePort(reuseport);
 	acceptSocket_.bindAddress(listenAddr);
@@ -30,6 +32,7 @@ Acceptor::~Acceptor()
 {
   acceptChannel_.disableAll();
   acceptChannel_.remove();
+	::close(idleFd_);
 }
 
 void Acceptor::listen()
@@ -64,5 +67,19 @@ void Acceptor::handleRead()
 	else
 	{
 		LOG_SYSERR << "in Acceptor::handleRead";
+		// 当进程的fd用尽时，关闭预留的idlefd_来腾出一个fd通知对端连接关闭
+    if (errno == EMFILE)
+    {
+      ::close(idleFd_);
+      while (1) {
+				idleFd_ = ::accept(acceptSocket_.fd(), NULL, NULL);
+				if (idleFd_ >= 0) break; 
+			}
+      ::close(idleFd_);
+      while (1) {
+				idleFd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
+				if (idleFd_ >= 0) break; 
+			}
+		}
 	}
 }

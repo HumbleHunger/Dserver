@@ -33,7 +33,10 @@ Channel::~Channel()
 {
 	assert(!eventHandling_);
 	assert(!addedToLoop_);
-	// TODO	
+	if (loop_->isInLoopThread())
+  {
+    assert(!loop_->hasChannel(this));
+  }	
 }
 
 void Channel::handleEvent(Timestamp receiveTime)

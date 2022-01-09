@@ -27,6 +27,7 @@ EventLoopThread::~EventLoopThread()
 // IO线程执行
 void EventLoopThread::threadFunc()
 {
+    // EnentLoop是栈上对象
     EventLoop loop;
 
     // 设置loop_
@@ -45,6 +46,7 @@ void EventLoopThread::threadFunc()
 EventLoop* EventLoopThread::startLoop()
 {
     assert(!thread_.started());
+    // 内部调用threadFunc函数，创建新线程调用threadFunc并在栈上创建loop对象
     thread_.start();
 
     EventLoop* loop = NULL;
