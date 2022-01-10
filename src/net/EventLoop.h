@@ -4,6 +4,8 @@
 #include <atomic>
 #include <functional>
 #include <vector>
+#include <map>
+#include <cassert>
 
 #include <boost/any.hpp>
 
@@ -30,7 +32,7 @@ public:
 	// 待处理的回调函数形式
 	typedef std::function<void()> Functor;
 
-	EventLoop();
+	EventLoop(bool main = false);
 	~EventLoop();
 /* 基本接口 */
 	// 获取当前线程的loop
@@ -84,7 +86,23 @@ public:
 	
 	bool eventHandling() const { return eventHandling_; }
 
+	void addConnection(const TcpConnectionPtr& ptr) {
+		connections_[ptr.get()] = ptr;
+	}
+
+	void removeConnection(const TcpConnectionPtr& conn) {
+		size_t n = connections_.erase(conn.get());
+		(void)n;
+		assert(n == 1);
+	}
+
 private:
+
+	typedef std::map<TcpConnection*, TcpConnectionPtr> TcpConnectionMap;
+	TcpConnectionMap connections_;
+	// 标记是否是主loop
+	bool main_;
+
 	void abortNotInLoopThread();
 	// WakefdChannel的回调函数
 	void handleRead();  // waked up

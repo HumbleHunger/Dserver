@@ -20,7 +20,7 @@ namespace net
 /* 此线程中的loop */
 __thread EventLoop* t_loopInThisThread = 0;
 // 每次poll等待的最大时间
-const int kPollTimeMs = 10000;
+const int kPollTimeMs = INT32_MAX;
 
 // eventfd用于线程间通信，用来实现IO线程间的唤醒
 int createEventfd()
@@ -39,11 +39,12 @@ EventLoop* EventLoop::getEventLoopOfCurrentThread()
   return t_loopInThisThread;
 }
 
-EventLoop::EventLoop()
+EventLoop::EventLoop(bool main)
 	:	looping_(false),
 		quit_(false),
 		eventHandling_(false),
 		callingPendingFunctors_(false),
+		main_(main),
 		threadId_(CurrentThread::tid()),
 		poller_(new EPollPoller(this)),
 		timerQueue_(new TimerQueue(this)),

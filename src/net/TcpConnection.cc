@@ -206,6 +206,8 @@ void TcpConnection::connectEstablished()
 	assert(state_ == kConnecting);
 	// 设置状态为已链接
 	setState(kConnected);
+
+	loop_->addConnection(shared_from_this());
 	// 设置channel的tie
 	channel_->tie(shared_from_this());
 	// 将TcpConnection所对应通道加入到Poller中关注
@@ -225,6 +227,8 @@ void TcpConnection::connectDestroyed()
 
 		connectionCallback_(shared_from_this());
 	}
+
+	loop_->removeConnection(shared_from_this());
 	// 将channel从Poller中移除
 	channel_->remove();
 }

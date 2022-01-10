@@ -3,6 +3,7 @@
 #include "Timestamp.h"
 
 #include <stdio.h>
+#include <iostream>
 
 
 namespace DJX
@@ -23,6 +24,7 @@ AsyncLogging::AsyncLogging(const std::string& basename,
         nextBuffer_(new Buffer),
         buffers_()
 {
+    std::cout << "start asyncLogging" << std::endl;
     currentBuffer_->bzero();
     nextBuffer_->bzero();
     buffers_.reserve(16);

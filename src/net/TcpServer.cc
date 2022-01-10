@@ -63,10 +63,10 @@ void TcpServer::newConnection(EventLoop* loop, int sockfd, const InetAddress& pe
 	conn->setWriteCompleteCallback(writeCompleteCallback_);
 	conn->setCloseCallback(std::bind(&TcpServer::removeConnection, this, std::placeholders::_1));
 	// 将Tcpconnection保存到TcpServer中
-	{
+	/*{
 		MutexLockGuard guard(mutex_);
 		connections_[conn.get()] = conn;
-	}
+	}*/
 	
 	// 将新建的Tcpconnection的channel加入到所属的IO线程loop中的Poller中关注
 	loop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
@@ -82,12 +82,12 @@ void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn)
 {
 	loop_->assertInLoopThread();
 	LOG_INFO << "TcpServer::removeConnectionInLoop - connection " << conn.get();
-	{
+	/*{
 		MutexLockGuard guard(mutex_);
 		size_t n = connections_.erase(conn.get());
 		(void)n;
 		assert(n == 1);
-	}
+	}*/
 	EventLoop* ioLoop = conn->getLoop();
 	ioLoop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
 }

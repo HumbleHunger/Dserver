@@ -50,7 +50,7 @@ private:
 	typedef std::map<TcpConnection*, TcpConnectionPtr> TcpConnectionMap;
 	// 注册到acceptor中的回调函数，对新链接进行初始化（创建新链接，注册回调函数等）
 	void newConnection(EventLoop* loop, int sockfd, const InetAddress& peerAddr);
-	// 被下层类TcpConnection回调，处理链接关闭
+	// 注册到下层TcpConn，被下层类TcpConnection回调，处理链接关闭
 	void removeConnection(const TcpConnectionPtr& conn);
 	/// Not thread safe, but in loop
 	void removeConnectionInLoop(const TcpConnectionPtr& conn);
@@ -65,7 +65,8 @@ private:
 	TcpConnectionMap connections_;
 	
 	std::shared_ptr<EventLoopThreadPool> IOthreadPool_;
-	// 新链接时的回调函数,由用户注册
+/* 注册到TcpConn的回调函数 */	
+	// 新链接出现时的回调函数,由用户注册
 	ConnectionCallback connectionCallback_;
 	// 有消息到来时的回调函数
 	MessageCallback messageCallback_;

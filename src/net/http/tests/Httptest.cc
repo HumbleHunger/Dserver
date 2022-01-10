@@ -63,7 +63,7 @@ void onRequest(const HttpRequest& req, HttpResponse* resp)
 
 int main(int argc, char* argv[])
 {
-  int numThreads = 1;
+  int numThreads = 4;
   if (argc > 1)
   {
     benchmark = true;
