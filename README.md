@@ -22,8 +22,12 @@ Dserver是一个运行于 Linux 平台下的基于Reactor模式的多线程网�
 * 使用gettid系统调用返回pid_t类型数据唯一标识线程，保证多个进程间的线程id唯一性，并使用__thread关键字为每个线程缓存pid_t，减小系统调用次数，提高性能。
 * 在全局预留一个文件描述符，以在当打开的文件描述符超过系统限制无法caaept时可使用此文件描述符通知对端无法服务，并解决busy loop问题。
 
-# 压测
-测试工具为 webbench1.5 ,去掉第一次热身数据,测试命令如下(100个客户端持续访问15秒)。
+### 运行环境
+![在这里插入图片描述](https://img-blog.csdnimg.cn/a6a61cf6cc514acf87a6f43941dbbcdb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBASHVtYmxlSHVuZ2Vy,size_16,color_FFFFFF,t_70,g_se,x_16#pic_center)
+ gcc 9.4.0
+ Dserver开启6个IO线程
+ 
+测试工具为 webbench1.5，测试命令如下(100个客户端持续访问15秒)。
 ```
 ./webbench -c 100 -t 15 http://127.0.0.1:8000/
 ```
