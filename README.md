@@ -3,7 +3,7 @@ Dserver是一个运行于 Linux 平台下的基于Reactor模式的多线程网�
 # 技术点
 ### 并发模型
 * 使用one-loop-per-thread + thread-pool 模型，可使IO与计算任务分离。
-* 使用epoll边缘触发的IO多路复用技术。
+* 使用epoll条件触发的IO多路复用技术。
 * 使用socket的SO_REUSEADDR，SO_REUSEPORT选项，创建多个socket监听同一端口，并将每个socket分别加入到一个IO线程的epoll监听队列中提供服务。
 * 使用eventfd + vector实现IO线程loop间通信，可以很灵活地在线程间调配负载。
 ### 缓冲区
