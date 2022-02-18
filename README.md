@@ -33,5 +33,5 @@ Dserver开启6个IO线程
 ```
 ./webbench -c 100 -t 15 http://127.0.0.1:8000/
 ```
-![在这里插入图片描述](https://img-blog.csdnimg.cn/c66d2c4947d24150a9627b33e4dae411.png#pic_center)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/75f93e28c7834dfa822b693e33d9d3d1.png#pic_center)
 
