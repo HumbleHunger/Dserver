@@ -77,7 +77,7 @@ int socketOps::accept(int sockfd, struct sockaddr_in* addr)
   int connfd = ::accept4(sockfd, sockaddr_cast(addr),
                          &addrlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
   //std::cout << "accept fd = " << connfd << std::endl;
-  if (connfd < 0)
+  /*if (connfd < 0)
   {
     int savedErrno = errno;
     LOG_SYSERR << "Socket::accept";
@@ -107,7 +107,7 @@ int socketOps::accept(int sockfd, struct sockaddr_in* addr)
         LOG_FATAL << "unknown error of ::accept " << savedErrno;
         break;
     }
-  }
+  }*/
   return connfd;
 }
 // 发起链接

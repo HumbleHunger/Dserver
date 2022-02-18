@@ -50,7 +50,7 @@ void Acceptor::handleRead()
 	loop_->assertInLoopThread();
 
 	InetAddress peerAddr;
-
+while (true) {//
 	int connfd = acceptSocket_.accept(&peerAddr);
 	if (connfd >= 0)
 	{
@@ -66,6 +66,9 @@ void Acceptor::handleRead()
 	}
 	else
 	{
+		if (errno == EAGAIN) {
+			break;
+		}
 		LOG_SYSERR << "in Acceptor::handleRead";
 		// 当进程的fd用尽时，关闭预留的idlefd_来腾出一个fd通知对端连接关闭
     if (errno == EMFILE)
@@ -82,4 +85,5 @@ void Acceptor::handleRead()
 			}
 		}
 	}
+}//
 }
