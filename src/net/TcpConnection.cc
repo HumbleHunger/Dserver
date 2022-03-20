@@ -276,7 +276,7 @@ void TcpConnection::handleWrite()
 				{
 					loop_->queueInLoop(std::bind(writeCompleteCallback_, shared_from_this()));
 				}
-				// 如果链接状态为正在关闭，则在写完数据后关闭链接
+				// 如果链接状态为正在关闭(服务端主动关闭)，则在写完数据后关闭链接
 				if (state_ == kDisconnecting)
 				{
 					shutdownInLoop();

@@ -131,7 +131,8 @@ void EventLoop::quit()
 void EventLoop::setAcceptor(std::unique_ptr<Acceptor>&& acceptor)
 {
 	// 转移所有权
-	acceptor_ = std::forward<std::unique_ptr<Acceptor>>(acceptor);
+	//acceptor_ = std::forward<std::unique_ptr<Acceptor>>(acceptor);
+	acceptor_ = std::move(acceptor);
 	
 	assert(!acceptor_->listening());
 	// 使acceptor开始监听,并在Poller中设置关注读事件
@@ -203,7 +204,7 @@ size_t EventLoop::queueSize() const
 // 唤醒poller,一般添加任务时调用
 void EventLoop::wakeup()
 {
-	// 通过往wakefd中写入一个字节的数据来实现read唤醒
+	// 通过往wakefd中写入八个字节的数据来实现read唤醒
 	uint64_t one = 1;
 	ssize_t n = socketOps::write(wakeupFd_, &one, sizeof one);
 	if (n != sizeof one)
@@ -229,7 +230,6 @@ void EventLoop::handleRead()
 		LOG_ERROR << "EventLoop::handleRead() reads " << n << " bytes instead of 8";
 	}
 }
-
 // 执行待处理函数
 void EventLoop::doPendingFunctors()
 {

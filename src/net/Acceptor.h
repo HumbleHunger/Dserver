@@ -14,9 +14,6 @@ namespace net
 class EventLoop;
 class InetAddress;
 
-///
-/// Acceptor of incoming TCP connections.
-///
 // 服务端监听套接字的封装
 class Acceptor : noncopyable
 {
