@@ -28,7 +28,6 @@ Dserver是一个运行于 Linux 平台下的基于Reactor模式的多线程网�
 ### 运行环境
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/a6a61cf6cc514acf87a6f43941dbbcdb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBASHVtYmxlSHVuZ2Vy,size_16,color_FFFFFF,t_70,g_se,x_16#pic_center)
 
-gcc 9.4.0
 Dserver开启6个IO线程
  
 测试工具为 webbench1.5，测试命令如下(100个客户端持续访问15秒)。
