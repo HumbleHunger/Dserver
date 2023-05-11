@@ -18,10 +18,10 @@ namespace net
 InetAddress::InetAddress(uint16_t port, bool loopbackOnly)
 {
 	memset(&addr_, 0, sizeof addr_);
-    addr_.sin_family = AF_INET;
-    in_addr_t ip = loopbackOnly ? kInaddrLoopback : kInaddrAny;
-    addr_.sin_addr.s_addr = socketOps::hostToNetwork32(ip);
-    addr_.sin_port = socketOps::hostToNetwork16(port);
+  addr_.sin_family = AF_INET;
+  in_addr_t ip = loopbackOnly ? kInaddrLoopback : kInaddrAny;
+  addr_.sin_addr.s_addr = socketOps::hostToNetwork32(ip);
+  addr_.sin_port = socketOps::hostToNetwork16(port);
 }
 
 InetAddress::InetAddress(const char* ip, uint16_t port)

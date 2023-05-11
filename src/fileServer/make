@@ -1,0 +1,1 @@
+g++ -o fileServer fileServer1.cc ../net/*.cc ../base/*.cc -lpthread

@@ -17,8 +17,8 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reusepor
 		// 创建socket
 		acceptSocket_(socketOps::createNonblockingOrDie(listenAddr.family())),
 		acceptChannel_(loop, acceptSocket_.fd()),
-		listening_(false),
-    idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
+		listening_(false)
+    //idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
   assert(idleFd_ >= 0);
 	acceptSocket_.setReuseAddr(true);
@@ -32,7 +32,7 @@ Acceptor::~Acceptor()
 {
   acceptChannel_.disableAll();
   acceptChannel_.remove();
-	::close(idleFd_);
+	//::close(idleFd_);
 }
 
 void Acceptor::listen()
@@ -52,24 +52,23 @@ void Acceptor::handleRead()
 	InetAddress peerAddr;
 while (true) {//
 	int connfd = acceptSocket_.accept(&peerAddr);
-	if (connfd >= 0)
+	if (connfd >= 0 && loop_->connection_nums() < 169)
 	{
 		if (newConnectionCallback_)
 		{
 			newConnectionCallback_(connfd, peerAddr);
-		}
-		else
-		{
+		} else {
 			LOG_DEBUG << " 因未设置newConnectionCallback connfd " << connfd << " 将被关闭 ";
 			socketOps::close(connfd);
 		}
-	}
-	else
-	{
+	} else if (connfd >= 0 && loop_->connection_nums() >= 150) {
+		::close(connfd);
+	} else {
 		if (errno == EAGAIN) {
 			break;
 		}
 		LOG_SYSERR << "in Acceptor::handleRead";
+		/*
 		// 当进程的fd用尽时，关闭预留的idlefd_来腾出一个fd通知对端连接关闭
     if (errno == EMFILE)
     {
@@ -84,6 +83,7 @@ while (true) {//
 				if (idleFd_ >= 0) break; 
 			}
 		}
+		*/
 	}
 }//
 }

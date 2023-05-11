@@ -26,7 +26,6 @@ class HttpServer : noncopyable
 
   EventLoop* getLoop() const { return server_.getLoop(); }
 
-  /// Not thread safe, callback be registered before calling start().
   void setHttpCallback(const HttpCallback& cb)
   {
     httpCallback_ = cb;

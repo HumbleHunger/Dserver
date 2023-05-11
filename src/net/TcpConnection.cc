@@ -34,6 +34,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
 	LOG_DEBUG << "TcpConnection::ctor at " << this
             << " fd = " << sockfd;
 	socket_->setKeepAlive(true);
+	loop_->add_connection_nums();
 }
 
 TcpConnection::~TcpConnection()
@@ -42,6 +43,7 @@ TcpConnection::~TcpConnection()
             << " fd=" << channel_->fd()
             << " state=" << stateToString();
 	assert(state_ == kDisconnected);
+	loop_->del_connection_nums();
 }
 
 void TcpConnection::send(const string& message)

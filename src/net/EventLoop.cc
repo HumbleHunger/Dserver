@@ -50,7 +50,8 @@ EventLoop::EventLoop(bool main)
 		timerQueue_(new TimerQueue(this)),
 		wakeupFd_(createEventfd()),
 		wakeupChannel_(new Channel(this, wakeupFd_)),
-		currentActiveChannel_(NULL)
+		currentActiveChannel_(NULL),
+		connection_nums_(0)
 {
 	LOG_DEBUG << "EventLoop created " << this << " in thread " << threadId_;
 	// 如果线程中已有loop则出现错误
