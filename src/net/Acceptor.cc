@@ -50,40 +50,40 @@ void Acceptor::handleRead()
 	loop_->assertInLoopThread();
 
 	InetAddress peerAddr;
-while (true) {//
-	int connfd = acceptSocket_.accept(&peerAddr);
-	if (connfd >= 0)
-	{
-		if (newConnectionCallback_)
+	while (true) {
+		int connfd = acceptSocket_.accept(&peerAddr);
+		if (connfd >= 0)
 		{
-			newConnectionCallback_(connfd, peerAddr);
+			if (newConnectionCallback_)
+			{
+				newConnectionCallback_(connfd, peerAddr);
+			}
+			else
+			{
+				LOG_DEBUG << " 因未设置newConnectionCallback connfd " << connfd << " 将被关闭 ";
+				socketOps::close(connfd);
+			}
 		}
 		else
 		{
-			LOG_DEBUG << " 因未设置newConnectionCallback connfd " << connfd << " 将被关闭 ";
-			socketOps::close(connfd);
-		}
-	}
-	else
-	{
-		if (errno == EAGAIN) {
-			break;
-		}
-		LOG_SYSERR << "in Acceptor::handleRead";
-		// 当进程的fd用尽时，关闭预留的idlefd_来腾出一个fd通知对端连接关闭
-    if (errno == EMFILE)
-    {
-      ::close(idleFd_);
-      while (1) {
-				idleFd_ = ::accept(acceptSocket_.fd(), NULL, NULL);
-				if (idleFd_ >= 0) break; 
+			if (errno == EAGAIN) {
+				break;
 			}
-      ::close(idleFd_);
-      while (1) {
-				idleFd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-				if (idleFd_ >= 0) break; 
+			LOG_SYSERR << "in Acceptor::handleRead";
+			// 当进程的fd用尽时，关闭预留的idlefd_来腾出一个fd通知对端连接关闭
+	    	if (errno == EMFILE)
+	    	{
+	    		::close(idleFd_);
+	    		while (1) {
+					idleFd_ = ::accept(acceptSocket_.fd(), NULL, NULL);
+					if (idleFd_ >= 0) break; 
+				}	
+	    		::close(idleFd_);
+	      		while (1) {
+					idleFd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
+					if (idleFd_ >= 0) break; 
+				}
 			}
 		}
 	}
-}//
 }

@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     numThreads = atoi(argv[1]);
   }
   EventLoop loop;
-  HttpServer server(&loop, InetAddress("127.0.0.1", 8000));
+  HttpServer server(&loop, InetAddress("127.0.0.1", 8001));
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);
   server.start();
