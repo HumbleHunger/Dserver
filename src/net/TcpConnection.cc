@@ -34,6 +34,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
 	LOG_DEBUG << "TcpConnection::ctor at " << this
             << " fd = " << sockfd;
 	socket_->setKeepAlive(true);
+	loop_->add_connection_nums();
 }
 
 TcpConnection::~TcpConnection()
@@ -42,6 +43,7 @@ TcpConnection::~TcpConnection()
             << " fd=" << channel_->fd()
             << " state=" << stateToString();
 	assert(state_ == kDisconnected);
+	loop_->del_connection_nums();
 }
 
 void TcpConnection::send(const string& message)
@@ -276,7 +278,7 @@ void TcpConnection::handleWrite()
 				{
 					loop_->queueInLoop(std::bind(writeCompleteCallback_, shared_from_this()));
 				}
-				// 如果链接状态为正在关闭，则在写完数据后关闭链接
+				// 如果链接状态为正在关闭(服务端主动关闭)，则在写完数据后关闭链接
 				if (state_ == kDisconnecting)
 				{
 					shutdownInLoop();

@@ -44,6 +44,12 @@ public:
 
 	Timestamp pollReturnTime() const { return pollReturnTime_; }
 
+	inline int connection_nums() const { return connection_nums_; }
+	
+	inline void add_connection_nums() { ++connection_nums_; }
+	
+	inline void del_connection_nums() { --connection_nums_; }
+
 	void setAcceptor(std::unique_ptr<Acceptor>&& acceptor);
 
 /* 设置事件接口 */
@@ -124,6 +130,8 @@ private:
 	Timestamp pollReturnTime_;
 	
 /* 核心内容 */	
+	int connection_nums_;
+	
 	// Poller
 	std::unique_ptr<EPollPoller> poller_;
 

@@ -54,7 +54,7 @@ public:
 		{
 			notFull_.wait();
 		}
-    	// 如果线程池已经stop则不添加，因为中间有解锁操作所以还应该判断
+    // 如果线程池已经stop则不添加，因为中间有解锁操作所以还应该判断
 		if (!pool_->running_) return;
 		queue_.push_back(std::move(x));
 		notEmpty_.notify();
@@ -63,12 +63,12 @@ public:
 	T take()
 	{
 		MutexLockGuard lock(mutex_);
-  		// 两个条件必须同时满足，不然无法关闭
+  	// 两个条件必须同时满足，不然无法关闭
 		while (queue_.empty() && pool_->running_)
 		{
 			notEmpty_.wait();
 		}
-    	// 如果线程池已经stop则不获取，因为中间有解锁操作所以还应该判断
+    // 如果线程池已经stop则不获取，因为中间有解锁操作所以还应该判断
 		if (!pool_->running_) return nullptr;
 		T front(std::move(queue_.front()));
 		queue_.pop_front();
