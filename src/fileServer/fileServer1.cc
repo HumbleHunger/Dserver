@@ -88,14 +88,6 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
             std::cout << "password is " << password << std::endl;
 
             if (passwordMap.count(filename) == 0 || passwordMap[filename] != password) {
-<<<<<<< HEAD
-                if (passwordMap.count(filename) == 0) {
-                    std::cout << "file not exist" << std::endl;
-                } else {
-                    std::cout << "password error" << std::endl;
-                }
-=======
->>>>>>> a14ef8dca5acafd3b3daa997754d2f1120e8c921
                 string data = "0";
                 conn->send(data.c_str(), 1);
             } else {
@@ -109,10 +101,6 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
                 }
 
                 char buffer[1024];
-<<<<<<< HEAD
-                memset(buffer, 0, sizeof(buffer));
-=======
->>>>>>> a14ef8dca5acafd3b3daa997754d2f1120e8c921
                 int count = 0;
 
                 while (fin.read(buffer, sizeof(buffer)).gcount() > 0)
@@ -137,13 +125,6 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
 
                 string data = "0";
                 conn->send(data.c_str(), 1);
-<<<<<<< HEAD
-                data = "0";
-                conn->send(data.c_str(), 1);
-                data = "0";
-                conn->send(data.c_str(), 1);
-=======
->>>>>>> a14ef8dca5acafd3b3daa997754d2f1120e8c921
 
                 fin.close();
                 printf("Server download file %s finished, size: %d bytes\n", filename.c_str(), count);
