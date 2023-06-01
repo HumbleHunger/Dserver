@@ -49,37 +49,7 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
             std::cout << "filename len is " << *lenp << std::endl;
             string filename = message.substr(10, *lenp);
             string password = message.substr(10 + *lenp, len - 10 - *lenp);
-            printf("Server will upload file: %s, password: %s\n", filename.c_str(), password.c_str());
-            std::ofstream fout(filename, std::ios::binary | std::ios::out);
-
-            if (!fout)
-            {
-                printf("Open file %s error!\n", filename.c_str());
-                return;
-            }
-           
-            buf->retrieve(len + 4);
-
-            while (buf->readableBytes() < 4) {
-                std::cout << "read len is " << buf->readableBytes() << std::endl;
-            };
-
-            // 读取请求头中的数据包长度
-            len = *reinterpret_cast<const int32_t*>(buf->peek());
-            std::cout << "filedata len is " << len << std::endl;
-            // 判断当前缓冲区中是否有一个完整的请求
-            while (buf->readableBytes() < len + 4) {
-                std::cout << "readable len is " << buf->readableBytes() << std::endl;
-            };
-        
-            fout.write(buf->peek() + 4, len);
-            fout.close();
             passwordMap[filename] = password;
-            printf("Server upload file %s finished\n", filename.c_str());
-
-        
-            // 回复客户端上传结果
-            conn->send(string("Upload file finished"));
         }
 
         // 处理客户端下载请求
@@ -103,6 +73,30 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
                 conn->send(data.c_str(), 1);
             } else {
                 printf("Server will download file: %s\n", filename.c_str());
+                int count = 0;
+                FILE *fp = fopen(filename.c_str(), "rb");
+                unsigned char buffer[1024];
+                memset(&buffer,0,sizeof(buffer));
+                while((len=fread(buffer, sizeof(unsigned char), 512, fp))>0)
+                {
+                    string data = "1";
+                    char lenp[4];
+                    memset(lenp, 0, 4);
+                    sprintf(lenp, "%d", len);
+                    for (int i = 0; i < 4; ++i) {
+                        data.push_back(lenp[i]);
+                    }
+                    
+                    for (int i = 0; i < len; ++i) {
+                        data.push_back(buffer[i]);
+                        std::cout << buffer[i];
+                    }
+
+                    conn->send(data.c_str(), data.size());
+                    count += len;
+                    memset(&buffer,0,sizeof(buffer));
+                }
+                /*
                 std::ifstream fin(filename, std::ios::binary | std::ios::in);
 
                 if (!fin)
@@ -127,14 +121,14 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
                         data.push_back(len[i]);
                     }
 
+                    //std::cout << buffer << std::endl;
+
                     data += string(buffer);
-                    for (int i = 0; i < data.size(); ++i) {
-                        std::cout << data[i];
-                    }
-                    std::cout << std::endl;
+                    std::cout << "send len " << data.size() << std::endl;
+                    std::cout << "send data " << data << std::endl;
                     conn->send(data.c_str(), data.size());
                 }
-
+*/
                 string data = "0";
                 conn->send(data.c_str(), 1);
                 data = "0";
@@ -142,9 +136,33 @@ void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp receiveTime)
                 data = "0";
                 conn->send(data.c_str(), 1);
 
-                fin.close();
+                fclose(fp);
                 printf("Server download file %s finished, size: %d bytes\n", filename.c_str(), count);
             }
+        }
+
+        // 处理客户端上传请求
+        if (message.substr(0, 4) == "FILE")
+        {
+            string nameLen = message.substr(4, 4);
+            int* lenp = (int*)nameLen.c_str();
+            std::cout << "filename len is " << *lenp << std::endl;
+            string filename = message.substr(8, *lenp);
+            printf("Server will upload file: %s\n", filename.c_str());
+            std::ofstream fout(filename, std::ios::binary | std::ios::out);
+
+            if (!fout)
+            {
+                printf("Open file %s error!\n", filename.c_str());
+                return;
+            }
+
+            fout.write(message.data() + 8 + *lenp, len - 8 - *lenp);
+            fout.close();
+            printf("Server upload file %s finished\n", filename.c_str());
+        
+            // 回复客户端上传结果
+            conn->send(string("Upload file finished"));
         }
 
         // 更新缓冲区
